@@ -145,6 +145,16 @@ curl http://localhost:50021/speakers
 3. ビルドが完了しているか確認（`dist/index.js`が存在するか）
 4. Claude Codeを完全に再起動
 
+### このリポジトリ内で `npx` が "command not found" になる場合
+
+`package.json` が `mcp-simple-voicevox` という bin を宣言しているため、このリポジトリ内では npx がローカルの `node_modules/.bin` を先に探し、実体が無くて失敗します。
+
+```bash
+npm run build && ln -sf ../../dist/index.js node_modules/.bin/mcp-simple-voicevox
+```
+
+他のディレクトリからは対処不要です。
+
 ### 権限エラーの場合
 
 ```bash
@@ -162,7 +172,9 @@ curl http://localhost:50021/speakers | jq '.[].styles[].id'
 
 よく使用される話者ID：
 
-- 1: 四国めたん（ノーマル）
-- 3: 四国めたん（ツンツン）
+- 0: 四国めたん（あまあま）
+- 1: ずんだもん（あまあま）
+- 2: 四国めたん（ノーマル）
+- 3: ずんだもん（ノーマル）
 - 8: 春日部つむぎ（ノーマル）
 - 10: 雨晴はう（ノーマル）
