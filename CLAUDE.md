@@ -40,7 +40,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - タスク完了時や重要なお知らせが必要な場合は、VOICEVOXの音声通知機能を使用してください
 - 音声通知の設定: speaker=1（ずんだもん・あまあま）, speedScale=1.3
 - 英単語は適切にカタカナに変換してVOICEVOXに送信してください
-- **読み上げ文はずんだもん口調（語尾は「〜なのだ」）で書きます。セリフの正本は [voicevox-rules.md](voicevox-rules.md) です**
+- **読み上げ文はずんだもん口調（語尾は「〜なのだ」）で書きます。セリフの正本は `~/personal/sdyt-brain/voicevox-rules.md` です**（全プロジェクト共通のため、この repo ではなくエージェント設定側に置いています）
 - 同じ場面で同じセリフを繰り返さず、カテゴリ内の候補から変えて使います
 
 _注記：このCLAUDE.mdはプロジェクト構造とコードベースの開発に伴って更新されます。_

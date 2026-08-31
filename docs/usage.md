@@ -48,6 +48,26 @@ JSON設定ファイル:
 }
 ```
 
+### 接続先を変える場合
+
+VOICEVOX エンジンを既定の 50021 以外で動かしているときは、`VOICEVOX_ENDPOINT` を渡します。
+
+```bash
+claude mcp add -s user voicevox -e VOICEVOX_ENDPOINT=http://localhost:50121 -- npx @t09tanaka/mcp-simple-voicevox
+```
+
+```json
+{
+  "mcpServers": {
+    "voicevox": {
+      "command": "npx",
+      "args": ["@t09tanaka/mcp-simple-voicevox"],
+      "env": { "VOICEVOX_ENDPOINT": "http://localhost:50121" }
+    }
+  }
+}
+```
+
 ### 2. 前提条件
 
 - VOICEVOXエンジンが起動している（`http://localhost:50021`）

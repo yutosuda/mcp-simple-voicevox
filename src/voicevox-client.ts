@@ -23,6 +23,20 @@ export class VoicevoxClient {
     speedScale?: number,
     volumeScale?: number
   ): Promise<void> {
+    await this.play(
+      await this.synthesize(text, speaker, speedScale, volumeScale)
+    );
+  }
+
+  // 合成と再生を分けてあるのは、呼び出し側が「合成は待つ／再生は待たない」を
+  // 選べるようにするため。まとめて非同期にすると、エンジン未起動や話者ID不正が
+  // 握り潰され、呼び出し側が成功と区別できなくなる。
+  async synthesize(
+    text: string,
+    speaker: number,
+    speedScale?: number,
+    volumeScale?: number
+  ): Promise<ArrayBuffer> {
     try {
       // 音声クエリの作成
       const queryResponse = await this.client.post('/audio_query', null, {
@@ -56,8 +70,7 @@ export class VoicevoxClient {
         }
       );
 
-      // 音声データの再生（一時的に音声ファイルとして保存して再生）
-      await this.playAudio(synthesisResponse.data);
+      return synthesisResponse.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.code === 'ECONNREFUSED') {
@@ -73,7 +86,8 @@ export class VoicevoxClient {
     }
   }
 
-  private async playAudio(audioData: ArrayBuffer): Promise<void> {
+  // 音声データを一時ファイルに書き出し、プラットフォーム標準の再生コマンドに渡す
+  async play(audioData: ArrayBuffer): Promise<void> {
     const fs = await import('fs');
     const path = await import('path');
     const { spawn } = await import('child_process');

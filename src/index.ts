@@ -9,7 +9,10 @@ import {
 import { createRequire } from 'node:module';
 import { VoicevoxClient } from './voicevox-client.js';
 
-const VOICEVOX_ENDPOINT = 'http://localhost:50021';
+// エンジンの居場所は注入できるようにしておく。VOICEVOX の GUI が 50021 を使うため、
+// 常駐エンジンを別ポートに置きたい場合にここを切り替える。
+const VOICEVOX_ENDPOINT =
+  process.env.VOICEVOX_ENDPOINT ?? 'http://localhost:50021';
 
 // package.json を唯一の正本にして、バージョンの二重管理を避ける
 const { version } = createRequire(import.meta.url)('../package.json') as {
@@ -97,18 +100,22 @@ class VoicevoxMCPServer {
             async?: boolean;
           };
 
-          if (isAsync) {
-            this.voicevoxClient
-              .speak(text, speaker, speedScale, volumeScale)
-              .catch((e) => console.error(e));
-          } else {
-            await this.voicevoxClient.speak(
-              text,
-              speaker,
-              speedScale,
-              volumeScale
-            );
-          }
+          // 合成までは async でも必ず待つ。ここを待たないと、エンジンが落ちていても
+          // 「おしゃべり完了」を返してしまい、呼び出し側が無音の失敗に気づけない。
+          const audio = await this.voicevoxClient.synthesize(
+            text,
+            speaker,
+            speedScale,
+            volumeScale
+          );
+
+          // ponytail: async のときは再生失敗（afplay 不在など）が stderr にしか出ない。
+          // 再生の完了を待たない以上ここが上限で、検知したい場合は async: false を使う。
+          isAsync
+            ? void this.voicevoxClient
+                .play(audio)
+                .catch((e) => console.error(e))
+            : await this.voicevoxClient.play(audio);
 
           return {
             content: [
