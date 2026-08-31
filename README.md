@@ -65,6 +65,10 @@ claude mcp add voicevox -- cmd /c npx @t09tanaka/mcp-simple-voicevox
 - `volumeScale` (number, オプション): 音量のスケール（0.0〜2.0、デフォルト: 1.0）
 - `async` (boolean, オプション): 非同期再生モード（falseの場合、音声再生の完了を待ちます。デフォルト: true）
 
+`async: true` でも**音声合成までは待ちます**。VOICEVOX エンジンが起動していない、話者 ID が不正といった合成時のエラーは、`async` の値にかかわらず `isError` で返ります。非同期になるのは再生だけです。
+
+再生自体の失敗（`afplay` が無いなど）は `async: true` では検知できません。検知したい場合は `async: false` を使ってください。
+
 **使用例:**
 
 ```json
@@ -93,6 +97,24 @@ curl http://localhost:50021/speakers
 - 3: ずんだもん（ノーマル）
 - 8: 春日部つむぎ（ノーマル）
 - 10: 雨晴はう（ノーマル）
+
+## 環境変数
+
+| 変数名              | 既定値                   | 説明                      |
+| ------------------- | ------------------------ | ------------------------- |
+| `VOICEVOX_ENDPOINT` | `http://localhost:50021` | VOICEVOX エンジンの接続先 |
+
+VOICEVOX の GUI アプリは 50021 を使います。エンジンを別に常駐させる場合は、そちらを別ポートで動かして `VOICEVOX_ENDPOINT` で指す構成にすると、GUI と共存できます。
+
+```bash
+claude mcp add -s user voicevox -e VOICEVOX_ENDPOINT=http://localhost:50121 -- npx @t09tanaka/mcp-simple-voicevox
+```
+
+GUI を使わずエンジンだけ動かす場合は、VOICEVOX.app に同梱のエンジンを直接起動できます。
+
+```bash
+/Applications/VOICEVOX.app/Contents/Resources/vv-engine/run --host 127.0.0.1 --port 50121
+```
 
 ## 対応プラットフォーム
 
