@@ -6,9 +6,15 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
+import { createRequire } from 'node:module';
 import { VoicevoxClient } from './voicevox-client.js';
 
 const VOICEVOX_ENDPOINT = 'http://localhost:50021';
+
+// package.json を唯一の正本にして、バージョンの二重管理を避ける
+const { version } = createRequire(import.meta.url)('../package.json') as {
+  version: string;
+};
 
 class VoicevoxMCPServer {
   private server: Server;
@@ -18,7 +24,7 @@ class VoicevoxMCPServer {
     this.server = new Server(
       {
         name: 'mcp-voicevox',
-        version: '0.1.0',
+        version,
       },
       {
         capabilities: {
