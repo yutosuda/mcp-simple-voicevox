@@ -87,9 +87,10 @@ curl http://localhost:50021/speakers
 
 一般的な話者 ID（参考）：
 
-- 1: 四国めたん（ノーマル）
-- 2: 四国めたん（あまあま）
-- 3: 四国めたん（ツンツン）
+- 0: 四国めたん（あまあま）
+- 1: ずんだもん（あまあま）
+- 2: 四国めたん（ノーマル）
+- 3: ずんだもん（ノーマル）
 - 8: 春日部つむぎ（ノーマル）
 - 10: 雨晴はう（ノーマル）
 
@@ -113,6 +114,18 @@ curl http://localhost:50021/speakers
 
 - Windows（ネイティブ）では `npx` を直接実行できないため、`cmd /c` 経由で実行する必要があります
 - 上記の「Windows（ネイティブ）」の設定例を参照してください
+
+### このリポジトリ自身のディレクトリで "Connection closed" になる
+
+`npx @t09tanaka/mcp-simple-voicevox` は、このパッケージのリポジトリ内で実行すると失敗します。`package.json` が同名の bin (`mcp-simple-voicevox`) を宣言しているため、npx がレジストリより先にローカルの `node_modules/.bin` を探しに行き、そこに実体が無いためです（`sh: mcp-simple-voicevox: command not found`）。
+
+開発時にリポジトリ内で使う場合は、ローカルビルドへの bin リンクを作ってください。
+
+```bash
+npm run build && ln -sf ../../dist/index.js node_modules/.bin/mcp-simple-voicevox
+```
+
+他のプロジェクトのディレクトリからは、この対処なしで動作します。
 
 ### 音声が再生されない
 
